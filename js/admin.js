@@ -15,6 +15,7 @@ const uploadedEmptyMsgs = {
 let projectDirHandle = null;
 let currentType = "desktop";
 const objectUrls = [];
+let dragState = null; // { type, filename } of the item currently being dragged
 
 function buildDeviceMockup(type, src) {
   if (type === "desktop") {
@@ -209,7 +210,11 @@ async function refreshUploadedGallery() {
 
       const item = document.createElement("div");
       item.className = "uploaded-item";
+      item.draggable = true;
+      item.dataset.type = type;
+      item.dataset.filename = filename;
       item.innerHTML = `
+        <span class="order-badge">${filenames.indexOf(filename) + 1}</span>
         <button class="uploaded-delete" title="Borrar">✕</button>
         ${buildDeviceMockup(type, url)}
         <span class="filename">${filename}</span>
@@ -217,8 +222,66 @@ async function refreshUploadedGallery() {
       item.querySelector(".uploaded-delete").addEventListener("click", () => {
         deleteScreenshot(type, filename);
       });
+      attachDragHandlers(item, type, filename);
       grid.appendChild(item);
     }
+  }
+}
+
+function attachDragHandlers(item, type, filename) {
+  item.addEventListener("dragstart", (e) => {
+    dragState = { type, filename };
+    item.classList.add("dragging");
+    e.dataTransfer.effectAllowed = "move";
+    // Firefox requires data to be set for the drag to start at all.
+    e.dataTransfer.setData("text/plain", filename);
+  });
+
+  item.addEventListener("dragend", () => {
+    dragState = null;
+    item.classList.remove("dragging");
+    item.parentElement
+      ?.querySelectorAll(".uploaded-item.drag-over")
+      .forEach((el) => el.classList.remove("drag-over"));
+  });
+
+  item.addEventListener("dragover", (e) => {
+    if (!dragState || dragState.type !== type || dragState.filename === filename) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    item.classList.add("drag-over");
+  });
+
+  item.addEventListener("dragleave", () => {
+    item.classList.remove("drag-over");
+  });
+
+  item.addEventListener("drop", async (e) => {
+    e.preventDefault();
+    item.classList.remove("drag-over");
+    if (!dragState || dragState.type !== type || dragState.filename === filename) return;
+    await reorderScreenshot(type, dragState.filename, filename);
+  });
+}
+
+async function reorderScreenshot(type, draggedFilename, targetFilename) {
+  try {
+    const screenshotsDir = await getScreenshotsDir();
+    const manifest = await readManifest(screenshotsDir);
+    const list = manifest[type];
+
+    const fromIndex = list.indexOf(draggedFilename);
+    const toIndex = list.indexOf(targetFilename);
+    if (fromIndex === -1 || toIndex === -1) return;
+
+    list.splice(fromIndex, 1);
+    list.splice(toIndex, 0, draggedFilename);
+
+    await writeManifest(screenshotsDir, manifest);
+    logLine(`Orden actualizado (${type}).`, "ok");
+    await refreshUploadedGallery();
+  } catch (err) {
+    logLine("Error al reordenar: " + err.message, "err");
   }
 }
 

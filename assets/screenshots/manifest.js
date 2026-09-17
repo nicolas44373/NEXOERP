@@ -13,14 +13,14 @@ window.NEXO_MANIFEST = {
     "Captura-de-pantalla-2026-09-17-113835.png"
   ],
   "mobile": [
+    "Captura-de-pantalla-2026-09-17-131933.png",
+    "Captura-de-pantalla-2026-09-17-131944.png",
+    "Captura-de-pantalla-2026-09-17-131954.png",
     "Captura-de-pantalla-2026-09-17-132134.png",
     "Captura-de-pantalla-2026-09-17-132122.png",
     "Captura-de-pantalla-2026-09-17-132113.png",
-    "Captura-de-pantalla-2026-09-17-132028.png",
     "Captura-de-pantalla-2026-09-17-132014.png",
-    "Captura-de-pantalla-2026-09-17-132005.png",
-    "Captura-de-pantalla-2026-09-17-131954.png",
-    "Captura-de-pantalla-2026-09-17-131944.png",
-    "Captura-de-pantalla-2026-09-17-131933.png"
+    "Captura-de-pantalla-2026-09-17-132028.png",
+    "Captura-de-pantalla-2026-09-17-132005.png"
   ]
 };
