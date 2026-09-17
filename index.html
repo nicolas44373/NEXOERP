@@ -254,15 +254,32 @@
     <div class="container">
       <p class="kicker">LA PRUEBA</p>
       <h2>Nexo en pantalla, sin efectos especiales</h2>
-      <p class="section-subtitle">Capturas reales del sistema en escritorio y celular.</p>
+      <p class="section-subtitle">
+        Capturas reales del sistema. Deslizá, usá las flechas o las teclas ← →.
+      </p>
 
       <div class="tabs">
         <button class="tab-btn active" data-tab="desktop">💻 Escritorio</button>
         <button class="tab-btn" data-tab="mobile">📱 Celular</button>
       </div>
 
-      <div id="gallery-desktop" class="gallery gallery-desktop"></div>
-      <div id="gallery-mobile" class="gallery gallery-mobile" hidden></div>
+      <div class="carousel" id="carousel-desktop" data-type="desktop">
+        <button class="carousel-arrow carousel-prev" aria-label="Captura anterior">‹</button>
+        <div class="carousel-viewport">
+          <div class="carousel-track" id="track-desktop"></div>
+        </div>
+        <button class="carousel-arrow carousel-next" aria-label="Siguiente captura">›</button>
+      </div>
+      <div class="carousel-dots" id="dots-desktop"></div>
+
+      <div class="carousel" id="carousel-mobile" data-type="mobile" hidden>
+        <button class="carousel-arrow carousel-prev" aria-label="Captura anterior">‹</button>
+        <div class="carousel-viewport">
+          <div class="carousel-track" id="track-mobile"></div>
+        </div>
+        <button class="carousel-arrow carousel-next" aria-label="Siguiente captura">›</button>
+      </div>
+      <div class="carousel-dots" id="dots-mobile" hidden></div>
 
       <p id="gallery-empty" class="gallery-empty" hidden>
         Todavía no hay capturas cargadas en esta sección.
