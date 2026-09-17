@@ -16,6 +16,38 @@ let projectDirHandle = null;
 let currentType = "desktop";
 const objectUrls = [];
 
+function buildDeviceMockup(type, src) {
+  if (type === "desktop") {
+    return `
+      <div class="device-mockup device-mockup-desktop">
+        <div class="device-frame device-frame-desktop">
+          <div class="device-cam" aria-hidden="true"></div>
+          <div class="device-screen"><img src="${src}" alt=""></div>
+        </div>
+        <div class="device-stand" aria-hidden="true">
+          <div class="device-stand-neck"></div>
+          <div class="device-stand-base"></div>
+        </div>
+      </div>
+    `;
+  }
+  return `
+    <div class="device-mockup device-mockup-mobile">
+      <div class="device-frame device-frame-mobile">
+        <div class="device-island" aria-hidden="true"></div>
+        <div class="device-screen">
+          <img src="${src}" alt="">
+          <div class="device-home-indicator" aria-hidden="true"></div>
+        </div>
+      </div>
+      <div class="device-btn device-btn-mute" aria-hidden="true"></div>
+      <div class="device-btn device-btn-vol-up" aria-hidden="true"></div>
+      <div class="device-btn device-btn-vol-down" aria-hidden="true"></div>
+      <div class="device-btn device-btn-power" aria-hidden="true"></div>
+    </div>
+  `;
+}
+
 function logLine(text, cls) {
   const span = document.createElement("div");
   if (cls) span.className = cls;
@@ -179,7 +211,7 @@ async function refreshUploadedGallery() {
       item.className = "uploaded-item";
       item.innerHTML = `
         <button class="uploaded-delete" title="Borrar">✕</button>
-        <img src="${url}" alt="${filename}">
+        ${buildDeviceMockup(type, url)}
         <span class="filename">${filename}</span>
       `;
       item.querySelector(".uploaded-delete").addEventListener("click", () => {

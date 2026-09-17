@@ -63,16 +63,17 @@
   }
   .uploaded-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 24px 16px;
   }
   .uploaded-item {
     position: relative;
-    background: #fffdf8;
-    border: 1px solid #d8cfb8;
     padding: 6px 6px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
-  .uploaded-item img { width: 100%; display: block; }
+  .uploaded-item .device-mockup { cursor: default; }
   .uploaded-item .filename {
     display: block;
     font-family: var(--font-mono);

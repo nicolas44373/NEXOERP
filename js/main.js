@@ -152,20 +152,39 @@ if (manifest.desktop && manifest.desktop.length > 0) {
 
 function buildSlide(type, filename, index) {
   const src = `assets/screenshots/${type}/${filename}`;
-  const chrome =
-    type === "desktop"
-      ? `<div class="device-topbar"><span></span><span></span><span></span></div>`
-      : `<div class="device-notch"></div>`;
   const slide = document.createElement("div");
   slide.className = "carousel-slide";
-  slide.innerHTML = `
-    <div class="device-frame device-frame-${type}">
-      ${chrome}
-      <div class="device-screen">
-        <img src="${src}" alt="Captura de Nexo ERP (${type})" loading="lazy">
-      </div>
-    </div>
-  `;
+  slide.innerHTML =
+    type === "desktop"
+      ? `
+        <div class="device-mockup device-mockup-desktop">
+          <div class="device-frame device-frame-desktop">
+            <div class="device-cam" aria-hidden="true"></div>
+            <div class="device-screen">
+              <img src="${src}" alt="Captura de Nexo ERP (escritorio)" loading="lazy">
+            </div>
+          </div>
+          <div class="device-stand" aria-hidden="true">
+            <div class="device-stand-neck"></div>
+            <div class="device-stand-base"></div>
+          </div>
+        </div>
+      `
+      : `
+        <div class="device-mockup device-mockup-mobile">
+          <div class="device-frame device-frame-mobile">
+            <div class="device-island" aria-hidden="true"></div>
+            <div class="device-screen">
+              <img src="${src}" alt="Captura de Nexo ERP (celular)" loading="lazy">
+              <div class="device-home-indicator" aria-hidden="true"></div>
+            </div>
+          </div>
+          <div class="device-btn device-btn-mute" aria-hidden="true"></div>
+          <div class="device-btn device-btn-vol-up" aria-hidden="true"></div>
+          <div class="device-btn device-btn-vol-down" aria-hidden="true"></div>
+          <div class="device-btn device-btn-power" aria-hidden="true"></div>
+        </div>
+      `;
   slide.querySelector("img").addEventListener("click", () => openLightbox(type, index));
   return slide;
 }
