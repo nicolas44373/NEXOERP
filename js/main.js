@@ -34,9 +34,13 @@ function updateEmptyState(type) {
   dotsEls[type].hidden = list.length <= 1;
 }
 
-// --- Lightbox ---
+// --- Lightbox (with its own prev/next navigation) ---
 const lightbox = document.getElementById("lightbox");
 const lightboxImg = document.getElementById("lightbox-img");
+const lightboxPrev = document.getElementById("lightbox-prev");
+const lightboxNext = document.getElementById("lightbox-next");
+const lightboxState = { type: null, index: 0 };
+
 document.getElementById("lightbox-close").addEventListener("click", () => {
   lightbox.hidden = true;
 });
@@ -44,10 +48,75 @@ lightbox.addEventListener("click", (e) => {
   if (e.target === lightbox) lightbox.hidden = true;
 });
 
-function openLightbox(src) {
-  lightboxImg.src = src;
+function lightboxSrc() {
+  const { type, index } = lightboxState;
+  const filename = carousels[type].files[index];
+  return `assets/screenshots/${type}/${filename}`;
+}
+
+function updateLightboxImage() {
+  lightboxImg.src = lightboxSrc();
+  const hasMultiple = carousels[lightboxState.type].files.length > 1;
+  lightboxPrev.disabled = !hasMultiple;
+  lightboxNext.disabled = !hasMultiple;
+}
+
+function openLightbox(type, index) {
+  lightboxState.type = type;
+  lightboxState.index = index;
+  updateLightboxImage();
   lightbox.hidden = false;
 }
+
+function stepLightbox(delta) {
+  const files = carousels[lightboxState.type].files;
+  if (files.length === 0) return;
+  lightboxState.index = (lightboxState.index + delta + files.length) % files.length;
+  updateLightboxImage();
+}
+
+lightboxPrev.addEventListener("click", () => stepLightbox(-1));
+lightboxNext.addEventListener("click", () => stepLightbox(1));
+
+window.addEventListener("keydown", (e) => {
+  if (lightbox.hidden) return;
+  if (e.key === "Escape") {
+    lightbox.hidden = true;
+    return;
+  }
+  if (e.key === "ArrowLeft") stepLightbox(-1);
+  if (e.key === "ArrowRight") stepLightbox(1);
+});
+
+// Touch swipe inside the lightbox
+(() => {
+  let startX = 0;
+  let deltaX = 0;
+  let dragging = false;
+
+  lightbox.addEventListener(
+    "touchstart",
+    (e) => {
+      startX = e.touches[0].clientX;
+      dragging = true;
+    },
+    { passive: true }
+  );
+  lightbox.addEventListener(
+    "touchmove",
+    (e) => {
+      if (!dragging) return;
+      deltaX = e.touches[0].clientX - startX;
+    },
+    { passive: true }
+  );
+  lightbox.addEventListener("touchend", () => {
+    if (!dragging) return;
+    dragging = false;
+    if (Math.abs(deltaX) > 40) stepLightbox(deltaX < 0 ? 1 : -1);
+    deltaX = 0;
+  });
+})();
 
 // --- Load manifest & render carousels ---
 // Loaded from assets/screenshots/manifest.js (window.NEXO_MANIFEST) via a
@@ -69,7 +138,7 @@ if (manifest.desktop && manifest.desktop.length > 0) {
   heroFrame.innerHTML = `<img src="assets/screenshots/desktop/${manifest.desktop[0]}" alt="Vista previa de NEXO">`;
 }
 
-function buildSlide(type, filename) {
+function buildSlide(type, filename, index) {
   const src = `assets/screenshots/${type}/${filename}`;
   const chrome =
     type === "desktop"
@@ -85,7 +154,7 @@ function buildSlide(type, filename) {
       </div>
     </div>
   `;
-  slide.querySelector("img").addEventListener("click", () => openLightbox(src));
+  slide.querySelector("img").addEventListener("click", () => openLightbox(type, index));
   return slide;
 }
 
@@ -93,7 +162,7 @@ function renderCarousel(type) {
   const files = manifest[type] || [];
   const track = document.getElementById(`track-${type}`);
   track.innerHTML = "";
-  files.forEach((filename) => track.appendChild(buildSlide(type, filename)));
+  files.forEach((filename, index) => track.appendChild(buildSlide(type, filename, index)));
 
   carousels[type].files = files;
   carousels[type].index = 0;
@@ -162,6 +231,7 @@ if ("IntersectionObserver" in window) {
 }
 
 window.addEventListener("keydown", (e) => {
+  if (!lightbox.hidden) return; // the lightbox has its own arrow-key handling
   if (!capturasInView) return;
   if (!["ArrowLeft", "ArrowRight"].includes(e.key)) return;
   const tag = document.activeElement.tagName;
