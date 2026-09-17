@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nexo — Subir capturas</title>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .admin-wrap { max-width: 780px; margin: 0 auto; padding: 60px 24px 100px; }
+  .admin-card {
+    background: var(--paper-dark);
+    border: 2px solid var(--ink);
+    padding: 28px;
+    margin-bottom: 24px;
+  }
+  .dropzone {
+    border: 2px dashed var(--ink);
+    padding: 40px;
+    text-align: center;
+    color: var(--ink-soft);
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+  }
+  .dropzone.dragover { border-color: var(--stamp); color: var(--ink); }
+  .type-toggle { display: flex; gap: 12px; margin-bottom: 20px; }
+  .type-toggle button {
+    flex: 1;
+    padding: 12px;
+    border: 2px solid var(--ink);
+    background: var(--paper);
+    color: var(--ink);
+    cursor: pointer;
+    font-size: 0.92rem;
+    font-family: var(--font-body);
+    font-weight: 600;
+  }
+  .type-toggle button.active { background: var(--ink); color: var(--paper); }
+  #log { font-family: var(--font-mono); font-size: 0.85rem; color: var(--ink-soft); white-space: pre-wrap; }
+  #log .ok { color: var(--green); }
+  #log .err { color: var(--stamp); }
+  .step {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--stamp);
+    margin-bottom: 10px;
+  }
+
+  .uploaded-group { margin-bottom: 28px; }
+  .uploaded-group h3 {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 14px;
+  }
+  .uploaded-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 16px;
+  }
+  .uploaded-item {
+    position: relative;
+    background: #fffdf8;
+    border: 1px solid #d8cfb8;
+    padding: 6px 6px 8px;
+  }
+  .uploaded-item img { width: 100%; display: block; }
+  .uploaded-item .filename {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: var(--ink-soft);
+    margin-top: 6px;
+    word-break: break-all;
+  }
+  .uploaded-delete {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--stamp);
+    color: var(--paper);
+    border: 2px solid var(--paper);
+    cursor: pointer;
+    font-size: 0.85rem;
+    line-height: 1;
+  }
+  .uploaded-empty {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+  }
+</style>
+</head>
+<body>
+<div class="admin-wrap">
+  <p class="step" style="text-align:left;">PANEL PRIVADO</p>
+  <h1 style="margin-bottom:8px;">Subir capturas de Nexo</h1>
+  <p style="margin:0 0 32px;">
+    Esta página corre solo en tu navegador: copia las imágenes directamente en la carpeta
+    <code>assets/screenshots</code> del proyecto y actualiza el manifiesto que lee la landing.
+    No sube nada a internet.
+  </p>
+
+  <div class="admin-card">
+    <p class="step">Paso 1</p>
+    <button class="btn btn-primary" id="pick-folder">📁 Elegir la carpeta del proyecto (NEXO)</button>
+    <p style="margin-top:12px;font-size:0.9rem;">Seleccioná la carpeta raíz "NEXO" (la que contiene index.html).</p>
+    <p id="folder-status" style="font-family: var(--font-mono); font-size:0.85rem;"></p>
+  </div>
+
+  <div class="admin-card">
+    <p class="step">Paso 2 — ¿Qué tipo de captura es?</p>
+    <div class="type-toggle">
+      <button class="active" data-type="desktop">💻 Escritorio (PC)</button>
+      <button data-type="mobile">📱 Celular</button>
+    </div>
+
+    <p class="step">Paso 3 — Arrastrá o seleccioná las imágenes</p>
+    <div class="dropzone" id="dropzone">
+      Arrastrá capturas acá, o hacé clic para elegir archivos
+      <input type="file" id="file-input" accept="image/*" multiple hidden>
+    </div>
+  </div>
+
+  <div class="admin-card">
+    <p class="step">Capturas cargadas</p>
+
+    <div class="uploaded-group">
+      <h3>💻 Escritorio</h3>
+      <div class="uploaded-grid" id="uploaded-desktop"></div>
+      <p class="uploaded-empty" id="uploaded-desktop-empty">Sin capturas todavía.</p>
+    </div>
+
+    <div class="uploaded-group">
+      <h3>📱 Celular</h3>
+      <div class="uploaded-grid" id="uploaded-mobile"></div>
+      <p class="uploaded-empty" id="uploaded-mobile-empty">Sin capturas todavía.</p>
+    </div>
+  </div>
+
+  <div class="admin-card">
+    <p class="step">Registro</p>
+    <div id="log">Esperando acciones…</div>
+  </div>
+
+  <p><a href="index.html">← Volver a la landing</a></p>
+</div>
+
+<script src="js/admin.js"></script>
+</body>
+</html>
