@@ -418,9 +418,29 @@ p { color: var(--ink-soft); }
   font-size: 0.95rem;
 }
 .contact-form input:focus,
-.contact-form textarea:focus {
+.contact-form textarea:focus,
+.contact-form select:focus {
   outline: 2px solid var(--stamp);
   outline-offset: 1px;
+}
+.phone-row {
+  display: grid;
+  grid-template-columns: minmax(150px, auto) 1fr;
+  gap: 10px;
+}
+.phone-code {
+  background: #fffdf8;
+  border: 2px solid var(--ink);
+  border-radius: var(--radius);
+  padding: 10px 8px;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  max-width: 100%;
+}
+.phone-number { min-width: 0; }
+@media (max-width: 420px) {
+  .phone-row { grid-template-columns: 1fr; }
 }
 .form-stamp {
   justify-self: start;
