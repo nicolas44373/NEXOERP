@@ -91,13 +91,21 @@ window.addEventListener("keydown", (e) => {
 // Touch swipe inside the lightbox
 (() => {
   let startX = 0;
+  let startY = 0;
   let deltaX = 0;
   let dragging = false;
+
+  const reset = () => {
+    dragging = false;
+    deltaX = 0;
+  };
 
   lightbox.addEventListener(
     "touchstart",
     (e) => {
       startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      deltaX = 0;
       dragging = true;
     },
     { passive: true }
@@ -107,15 +115,19 @@ window.addEventListener("keydown", (e) => {
     (e) => {
       if (!dragging) return;
       deltaX = e.touches[0].clientX - startX;
+      const deltaY = e.touches[0].clientY - startY;
+      // Once the gesture is clearly horizontal, claim it so the browser
+      // doesn't hijack it for its own zoom/drag/navigation gestures.
+      if (Math.abs(deltaX) > Math.abs(deltaY)) e.preventDefault();
     },
-    { passive: true }
+    { passive: false }
   );
   lightbox.addEventListener("touchend", () => {
     if (!dragging) return;
-    dragging = false;
     if (Math.abs(deltaX) > 40) stepLightbox(deltaX < 0 ? 1 : -1);
-    deltaX = 0;
+    reset();
   });
+  lightbox.addEventListener("touchcancel", reset);
 })();
 
 // --- Load manifest & render carousels ---
@@ -135,7 +147,7 @@ updateEmptyState("desktop");
 
 if (manifest.desktop && manifest.desktop.length > 0) {
   const heroFrame = document.getElementById("hero-frame");
-  heroFrame.innerHTML = `<img src="assets/screenshots/desktop/${manifest.desktop[0]}" alt="Vista previa de NEXO">`;
+  heroFrame.innerHTML = `<img src="assets/screenshots/desktop/${manifest.desktop[0]}" alt="Vista previa de Nexo ERP">`;
 }
 
 function buildSlide(type, filename, index) {
@@ -150,7 +162,7 @@ function buildSlide(type, filename, index) {
     <div class="device-frame device-frame-${type}">
       ${chrome}
       <div class="device-screen">
-        <img src="${src}" alt="Captura de Nexo (${type})" loading="lazy">
+        <img src="${src}" alt="Captura de Nexo ERP (${type})" loading="lazy">
       </div>
     </div>
   `;
