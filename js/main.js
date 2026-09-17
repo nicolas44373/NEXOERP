@@ -69,11 +69,30 @@ function renderGallery(type) {
   });
 }
 
-// --- Contact form (front-end only placeholder) ---
+// --- Contact form (sends via FormSubmit, no backend of our own) ---
 const form = document.getElementById("contact-form");
 const formNote = document.getElementById("form-note");
-form.addEventListener("submit", (e) => {
+const formError = document.getElementById("form-error");
+const formSubmitBtn = form.querySelector("button[type=submit]");
+
+form.addEventListener("submit", async (e) => {
   e.preventDefault();
-  formNote.hidden = false;
-  form.reset();
+  formNote.hidden = true;
+  formError.hidden = true;
+  formSubmitBtn.disabled = true;
+
+  try {
+    const response = await fetch(form.action, {
+      method: "POST",
+      headers: { Accept: "application/json" },
+      body: new FormData(form),
+    });
+    if (!response.ok) throw new Error("request failed");
+    formNote.hidden = false;
+    form.reset();
+  } catch {
+    formError.hidden = false;
+  } finally {
+    formSubmitBtn.disabled = false;
+  }
 });

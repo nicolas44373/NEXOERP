@@ -281,7 +281,15 @@
           al tuyo.
         </p>
       </div>
-      <form class="contact-form" id="contact-form">
+      <form
+        class="contact-form"
+        id="contact-form"
+        action="https://formsubmit.co/ajax/nicolasalurralde39@gmail.com"
+        method="POST"
+      >
+        <input type="hidden" name="_subject" value="Nueva consulta desde la landing de Nexo">
+        <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+
         <label>
           Nombre
           <input type="text" name="nombre" required>
@@ -300,6 +308,10 @@
         </label>
         <button type="submit" class="btn btn-primary">Enviar pedido de demo</button>
         <div class="form-stamp" id="form-note" hidden>PEDIDO RECIBIDO</div>
+        <p class="form-error" id="form-error" hidden>
+          Uy, no se pudo enviar. Escribinos directo por
+          <a href="https://wa.me/5493815507992" target="_blank" rel="noopener">WhatsApp</a>.
+        </p>
       </form>
     </div>
   </section>
@@ -318,6 +330,18 @@
   <button class="lightbox-close" id="lightbox-close">✕</button>
   <img id="lightbox-img" src="" alt="Captura ampliada">
 </div>
+
+<a
+  class="whatsapp-float"
+  href="https://wa.me/5493815507992?text=Hola%2C%20quiero%20saber%20m%C3%A1s%20sobre%20Nexo"
+  target="_blank"
+  rel="noopener"
+  aria-label="Escribinos por WhatsApp"
+>
+  <svg viewBox="0 0 32 32" width="28" height="28" fill="currentColor" aria-hidden="true">
+    <path d="M16.02 2.67c-7.36 0-13.34 5.98-13.34 13.34 0 2.35.62 4.65 1.79 6.67L2.67 29.33l6.83-1.79a13.28 13.28 0 0 0 6.52 1.71h.01c7.36 0 13.34-5.98 13.34-13.34S23.38 2.67 16.02 2.67Zm0 24.4h-.01a11.1 11.1 0 0 1-5.66-1.55l-.41-.24-4.05 1.06 1.08-3.95-.27-.41a11.06 11.06 0 0 1-1.7-5.9c0-6.12 4.98-11.1 11.11-11.1 2.97 0 5.76 1.16 7.86 3.26a11.03 11.03 0 0 1 3.25 7.85c0 6.13-4.98 11-11.2 10.98Zm6.1-8.24c-.33-.17-1.98-.98-2.29-1.09-.31-.11-.53-.17-.76.17-.22.33-.87 1.09-1.07 1.31-.2.22-.39.25-.72.08-.33-.17-1.4-.52-2.67-1.66-.99-.88-1.65-1.97-1.85-2.3-.19-.33-.02-.5.15-.67.15-.15.33-.39.5-.58.17-.2.22-.33.33-.56.11-.22.06-.42-.03-.58-.08-.17-.76-1.85-1.05-2.53-.28-.66-.56-.57-.76-.58h-.65c-.22 0-.58.08-.88.42-.3.33-1.15 1.13-1.15 2.75s1.18 3.19 1.34 3.42c.17.22 2.33 3.56 5.64 4.99.79.34 1.4.55 1.88.7.79.25 1.5.22 2.07.13.63-.1 1.98-.81 2.26-1.59.28-.78.28-1.44.2-1.58-.08-.14-.3-.22-.63-.39Z"/>
+  </svg>
+</a>
 
 <script src="assets/screenshots/manifest.js"></script>
 <script src="js/main.js"></script>

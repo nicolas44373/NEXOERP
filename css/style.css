@@ -434,6 +434,32 @@ p { color: var(--ink-soft); }
   padding: 14px 18px;
   transform: rotate(-8deg);
 }
+.form-error {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--stamp);
+  margin: 0;
+}
+.form-error a { color: var(--stamp); }
+
+/* WhatsApp floating button */
+.whatsapp-float {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: #25d366;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.35), 0 0 0 3px var(--paper);
+  z-index: 60;
+  transition: transform 0.15s ease;
+}
+.whatsapp-float:hover { transform: scale(1.08); }
 
 /* Footer */
 .footer {
